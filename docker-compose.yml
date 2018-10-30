@@ -1,0 +1,38 @@
+version: '2'
+services:
+  api:
+    build:
+      context: ./api
+    volumes:
+      - ./api:/api
+    ports:
+      #- "5000:5000" # For development
+      - "443:5000" # For production
+    depends_on:
+      - db
+    links:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        app_env: ${APP_ENV}
+    volumes:
+      - ./frontend/src:/frontend/src
+    ports:
+      #- "3000:3000" # For development
+      - "80:3000" # For production
+
+  db:
+    build:
+      context: ./db
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/pgdata:/pgdata
+    ports:
+      - "5432"
+    environment:
+      - POSTGRES_USER=blogsuggestor
+      - POSTGRES_PASSWORD=d8h*_z6a#SJ=cFfw
+      - PGDATA=/pgdata
